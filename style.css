@@ -1,0 +1,392 @@
+:root {
+  --bg:       #0a0a0a;
+  --surface:  #141414;
+  --surface2: #1c1c1c;
+  --border:   #2a2a2a;
+  --text:     #c8c8c8;
+  --text-dim: #666;
+  --accent:   #d4ff00;
+  --accent2:  #9bb800;
+  --danger:   #ff3b3b;
+  --sidebar:  240px;
+  --header:   48px;
+  --footer:   52px;
+  --radius:   3px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ────────────────────────────────────────────────── */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header);
+  padding: 0 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: var(--sidebar);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.canvas-area {
+  flex: 1;
+  position: relative;
+  background: #000;
+  cursor: crosshair;
+}
+
+.canvas-area.drag-over::after {
+  content: 'Drop image';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--accent);
+  background: rgba(0,0,0,0.7);
+  border: 2px dashed var(--accent);
+  pointer-events: none;
+}
+
+#output-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--footer);
+  padding: 0 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+/* ── Logo ──────────────────────────────────────────────────── */
+
+.logo {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--accent);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* ── Buttons ───────────────────────────────────────────────── */
+
+button {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  padding: 5px 10px;
+  transition: border-color 0.1s, color 0.1s, background 0.1s;
+  white-space: nowrap;
+}
+
+button:hover { border-color: #555; color: #fff; }
+
+button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+  font-weight: 700;
+}
+
+/* Source buttons */
+.source-controls { display: flex; gap: 6px; }
+
+/* Mode tabs */
+.mode-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.mode-btn {
+  flex: 1;
+  border-radius: 0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mode-btn.active {
+  background: transparent;
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.mode-btn:hover:not(.active) { background: var(--surface2); }
+
+/* Shape buttons */
+.shape-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.shape-btn {
+  padding: 5px 0;
+  font-size: 12px;
+  text-align: center;
+  min-width: 0;
+}
+
+/* Preset buttons */
+.preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.preset-btn {
+  padding: 5px 4px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.preset-btn:hover { background: var(--surface2); border-color: var(--accent2); color: var(--accent); }
+
+/* Download */
+.download-btn {
+  padding: 8px 20px;
+  border-color: var(--accent2);
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.download-btn:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+
+/* ── Sidebar sections ──────────────────────────────────────── */
+
+.section {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+}
+
+.section-title {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  user-select: none;
+}
+
+/* ── Controls ──────────────────────────────────────────────── */
+
+.control {
+  margin-bottom: 9px;
+}
+
+.control:last-child { margin-bottom: 0; }
+
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+.control-label span {
+  color: var(--text);
+  font-weight: 700;
+  min-width: 28px;
+  text-align: right;
+}
+
+/* Sliders */
+input[type="range"] {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+}
+
+/* Selects */
+select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11px;
+  padding: 5px 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  outline: none;
+}
+
+select:focus { border-color: var(--accent2); }
+
+/* Color pickers */
+.color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.color-label { color: var(--text-dim); font-size: 11px; }
+
+input[type="color"] {
+  -webkit-appearance: none;
+  width: 32px;
+  height: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1px;
+  background: var(--surface2);
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border: none; border-radius: 2px; }
+
+/* Toggle (checkbox) */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.toggle-label { color: var(--text-dim); font-size: 11px; }
+
+.toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 30px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--border);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: transform 0.15s, background 0.15s;
+}
+
+.toggle:checked { background: var(--accent2); }
+.toggle:checked::after { transform: translateX(14px); background: var(--accent); }
+
+/* Status bar */
+#status {
+  font-size: 11px;
+  color: var(--text-dim);
+  flex: 1;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+/* Hidden */
+.hidden { display: none !important; }
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── No-source overlay ─────────────────────────────────────── */
+#no-source {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+#no-source .big { font-size: 40px; letter-spacing: -3px; color: var(--border); }
+#no-source p { font-size: 12px; }

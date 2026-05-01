@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ddddddot",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "4040", "."],
+      "port": 4040
+    }
+  ]
+}

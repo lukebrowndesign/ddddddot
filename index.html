@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ddddddot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">ddddddot</div>
+    <div class="source-controls">
+      <button id="btn-camera">● Camera</button>
+      <button id="btn-upload">↑ Upload</button>
+      <input type="file" id="file-input" accept="image/*" hidden>
+    </div>
+    <div id="status">Drop an image or start camera</div>
+  </header>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <!-- Mode tabs -->
+      <div class="mode-tabs">
+        <button class="mode-btn active" data-mode="halftone">Halftone</button>
+        <button class="mode-btn" data-mode="dither">Dither</button>
+      </div>
+
+      <!-- Halftone section -->
+      <div class="section" id="halftone-section">
+        <div class="section-title">Shape</div>
+        <div class="shape-row">
+          <button class="shape-btn active" data-shape="circle"   title="Circle">●</button>
+          <button class="shape-btn"        data-shape="square"   title="Square">■</button>
+          <button class="shape-btn"        data-shape="diamond"  title="Diamond">◆</button>
+          <button class="shape-btn"        data-shape="cross"    title="Cross">✚</button>
+          <button class="shape-btn"        data-shape="line"     title="Line">▬</button>
+          <button class="shape-btn"        data-shape="triangle" title="Triangle">▲</button>
+          <button class="shape-btn"        data-shape="ring"     title="Ring">○</button>
+        </div>
+
+        <div class="control" style="margin-top:10px">
+          <div class="control-label">Cell size <span id="cell-size-val">12</span></div>
+          <input type="range" id="cell-size" min="3" max="48" value="12">
+        </div>
+
+        <div class="control">
+          <div class="control-label">Angle <span id="angle-val">45°</span></div>
+          <input type="range" id="angle" min="0" max="89" value="45">
+        </div>
+
+        <div class="control">
+          <div class="control-label">Dot scale <span id="dot-scale-val">0.90</span></div>
+          <input type="range" id="dot-scale" min="0.2" max="1.6" step="0.05" value="0.9">
+        </div>
+      </div>
+
+      <!-- Dither section -->
+      <div class="section hidden" id="dither-section">
+        <div class="section-title">Algorithm</div>
+        <div class="control">
+          <select id="dither-algo">
+            <optgroup label="Error Diffusion">
+              <option value="floyd-steinberg">Floyd-Steinberg</option>
+              <option value="atkinson">Atkinson</option>
+              <option value="sierra">Sierra</option>
+              <option value="sierra-two">Sierra (2-row)</option>
+              <option value="sierra-lite">Sierra Lite</option>
+              <option value="stucki">Stucki</option>
+              <option value="burkes">Burkes</option>
+              <option value="jarvis">Jarvis-Judice-Ninke</option>
+            </optgroup>
+            <optgroup label="Ordered">
+              <option value="bayer-2">Bayer 2×2</option>
+              <option value="bayer-4">Bayer 4×4</option>
+              <option value="bayer-8">Bayer 8×8</option>
+              <option value="bayer-16">Bayer 16×16</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option value="random">Random noise</option>
+              <option value="threshold">Threshold</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="control">
+          <div class="control-label">Threshold <span id="threshold-val">128</span></div>
+          <input type="range" id="threshold" min="0" max="255" value="128">
+        </div>
+      </div>
+
+      <!-- Image adjustments -->
+      <div class="section">
+        <div class="section-title">Image</div>
+
+        <div class="control">
+          <div class="control-label">Brightness <span id="brightness-val">0</span></div>
+          <input type="range" id="brightness" min="-100" max="100" value="0">
+        </div>
+
+        <div class="control">
+          <div class="control-label">Contrast <span id="contrast-val">0</span></div>
+          <input type="range" id="contrast" min="-100" max="100" value="0">
+        </div>
+
+        <div class="control">
+          <div class="control-label">Blur <span id="blur-val">0.0</span></div>
+          <input type="range" id="blur" min="0" max="10" step="0.5" value="0">
+        </div>
+
+        <div class="toggle-row">
+          <span class="toggle-label">Mirror</span>
+          <input type="checkbox" class="toggle" id="mirror">
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Invert</span>
+          <input type="checkbox" class="toggle" id="invert">
+        </div>
+      </div>
+
+      <!-- Color -->
+      <div class="section" id="color-section">
+        <div class="section-title">Color</div>
+
+        <div class="control" id="color-mode-row">
+          <select id="color-mode">
+            <option value="mono">Monochrome</option>
+            <option value="cmyk">CMYK halftone</option>
+            <option value="rgb">RGB halftone</option>
+          </select>
+        </div>
+
+        <div id="fg-row">
+          <div class="color-row" style="margin-bottom:7px">
+            <span class="color-label">Ink / foreground</span>
+            <input type="color" id="fg-color" value="#000000">
+          </div>
+        </div>
+
+        <div id="bg-row">
+          <div class="color-row">
+            <span class="color-label">Paper / background</span>
+            <input type="color" id="bg-color" value="#ffffff">
+          </div>
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div class="section">
+        <div class="section-title">Presets</div>
+        <div class="preset-grid">
+          <button class="preset-btn" data-preset="newspaper">Newspaper</button>
+          <button class="preset-btn" data-preset="offset-print">Offset print</button>
+          <button class="preset-btn" data-preset="risograph">Risograph</button>
+          <button class="preset-btn" data-preset="lcd">LCD</button>
+          <button class="preset-btn" data-preset="woodblock">Woodblock</button>
+          <button class="preset-btn" data-preset="blueprint">Blueprint</button>
+          <button class="preset-btn" data-preset="punk">Punk</button>
+          <button class="preset-btn" data-preset="silk">Silk screen</button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Canvas -->
+    <div class="canvas-area">
+      <canvas id="output-canvas"></canvas>
+      <video id="video" autoplay playsinline muted hidden></video>
+      <div id="no-source">
+        <div class="big">ddddddot</div>
+        <p>Start camera or drop / paste an image</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div style="font-size:11px; color:var(--text-dim); letter-spacing:0.5px">
+      SPACE · freeze &nbsp;|&nbsp; ⌘V · paste image
+    </div>
+    <button class="download-btn" id="btn-download">↓ Download PNG</button>
+  </footer>
+
+</div>
+
+<script src="js/dither.js"></script>
+<script src="js/halftone.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
