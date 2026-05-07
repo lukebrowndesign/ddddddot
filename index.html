@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ddddddot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -56,7 +59,8 @@
       <div class="section hidden" id="char-section">
         <div class="section-title">Character</div>
 
-        <input type="text" id="char-input" class="char-input" value="." maxlength="2"
+        <input type="text" id="char-input" class="char-input" value="."
+               placeholder="type a string…"
                autocomplete="off" autocorrect="off" spellcheck="false">
 
         <div class="section-title" style="margin:8px 0 5px">Quick pick</div>
@@ -96,11 +100,13 @@
         <div class="control" style="margin-top:10px">
           <div class="control-label">Font <span></span></div>
           <select id="font-family">
+            <option value="'JetBrains Mono', monospace" selected>JetBrains Mono</option>
             <option value="monospace">Monospace</option>
             <option value="'Courier New', monospace">Courier New</option>
             <option value="serif">Serif</option>
             <option value="sans-serif">Sans-serif</option>
             <option value="'Times New Roman', serif">Times New Roman</option>
+            <option value="'Georgia', serif">Georgia</option>
           </select>
         </div>
       </div>

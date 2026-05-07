@@ -270,6 +270,9 @@ const Halftone = (() => {
     outputCtx.textAlign    = 'center';
     outputCtx.textBaseline = 'middle';
 
+    // Support multi-character strings — cycle through each char across the grid
+    const charStr = (char && char.length > 0) ? char : '.';
+
     const rad  = (angle * Math.PI) / 180;
     const cos  = Math.cos(rad), sin = Math.sin(rad);
     const cxC  = width / 2,    cyC = height / 2;
@@ -281,14 +284,20 @@ const Halftone = (() => {
       outputCtx.font = `${cellSize}px ${fontFamily}`;
     }
 
+    // Running index cycles through charStr for every grid cell (including
+    // out-of-bounds ones) so the pattern is stable as the canvas resizes
+    let charIdx = 0;
+
     for (let gy = -diag; gy <= diag; gy += cellSize) {
       for (let gx = -diag; gx <= diag; gx += cellSize) {
+        const currentChar = charStr[charIdx % charStr.length];
+        charIdx++;
+
         let px, py;
         if (rotated) {
           px = cxC + gx * cos - gy * sin;
           py = cyC + gx * sin + gy * cos;
         } else {
-          // Simple grid — offset so chars are centred in cells
           px = cxC + gx;
           py = cyC + gy;
         }
@@ -309,13 +318,11 @@ const Halftone = (() => {
         let fillColor;
 
         if (charMode === 'size') {
-          // Size varies like halftone, fixed foreground colour
           const fs = t * cellSize * dotScale;
           if (fs < 0.5) continue;
           outputCtx.font = `${fs}px ${fontFamily}`;
           fillColor = foreground;
         } else {
-          // Fixed size, colour interpolated between bg → fg
           if (colorMode === 'color') {
             fillColor = `rgb(${sr},${sg},${sb})`;
           } else {
@@ -332,10 +339,10 @@ const Halftone = (() => {
           outputCtx.save();
           outputCtx.translate(px, py);
           outputCtx.rotate(rad);
-          outputCtx.fillText(char, 0, 0);
+          outputCtx.fillText(currentChar, 0, 0);
           outputCtx.restore();
         } else {
-          outputCtx.fillText(char, px, py);
+          outputCtx.fillText(currentChar, px, py);
         }
       }
     }

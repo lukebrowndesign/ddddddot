@@ -9,7 +9,7 @@
     // char
     char:       '.',
     charMode:   'ramp',      // 'ramp' | 'size'
-    fontFamily: 'monospace',
+    fontFamily: "'JetBrains Mono', monospace",
     // dither
     ditherAlgo: 'bayer-8',
     threshold:  50,
@@ -288,14 +288,16 @@
     const charInput = document.getElementById('char-input');
     if (charInput) {
       charInput.addEventListener('input', () => {
-        const v = charInput.value;
-        if (v.length > 0) { state.char = v[v.length - 1]; charInput.value = state.char; }
+        // Accept the full string — empty falls back to '.' in renderChar
+        state.char = charInput.value;
         triggerRender();
       });
     }
     document.querySelectorAll('.char-pick').forEach(btn => {
       btn.addEventListener('click', () => {
-        state.char = btn.dataset.char;
+        // Append to existing string (or replace if input is empty/single default)
+        const current = (charInput && charInput.value.length > 0 && charInput.value !== '.') ? charInput.value : '';
+        state.char = current + btn.dataset.char;
         if (charInput) charInput.value = state.char;
         triggerRender();
       });
@@ -453,13 +455,13 @@
       brightness: 0, contrast: 20, blur: 0.5, invert: false
     },
     monitor: {
-      mode: 'char', char: '.', charMode: 'ramp', fontFamily: 'monospace',
+      mode: 'char', char: '.', charMode: 'ramp', fontFamily: "'JetBrains Mono', monospace",
       cellSize: 7, angle: 0,
       colorMode: 'mono', fgColor: '#c8c8c8', bgColor: '#0a0a0a',
       brightness: 0, contrast: 20, blur: 0, invert: false
     },
     typewriter: {
-      mode: 'char', char: '@', charMode: 'size', fontFamily: "'Courier New', monospace",
+      mode: 'char', char: '@', charMode: 'size', fontFamily: "'JetBrains Mono', monospace",
       cellSize: 14, angle: 0,
       colorMode: 'mono', fgColor: '#1a1a1a', bgColor: '#f5f0e8',
       brightness: 0, contrast: 25, blur: 0.5, invert: false
