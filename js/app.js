@@ -69,7 +69,7 @@
       state.source = 'camera';
       state.isLive = true;
       setActiveSource('camera');
-      showStatus('SPACE to freeze');
+      showStatus('Press SPACE to start photobooth');
       showNoSource(false);
       scheduleFrame();
     } catch (e) {
@@ -357,20 +357,12 @@
       if (item) loadFile(item.getAsFile());
     });
 
-    // Spacebar freeze
+    // Spacebar — photobooth trigger
     document.addEventListener('keydown', e => {
       if (e.code === 'Space' && e.target === document.body) {
         e.preventDefault();
-        if (state.source === 'camera') {
-          if (state.isLive) {
-            state.isLive = false;
-            if (state.animFrame) { cancelAnimationFrame(state.animFrame); state.animFrame = null; }
-            showStatus('Frozen — SPACE to resume');
-          } else {
-            state.isLive = true;
-            showStatus('SPACE to freeze');
-            scheduleFrame();
-          }
+        if (state.source === 'camera' && state.isLive) {
+          Photobooth.onSpace();
         }
       }
     });
@@ -536,6 +528,7 @@
     bindControls();
     updateAllUI();
     window.addEventListener('resize', resizeCanvas);
+    Photobooth.init(outputCanvas);
     showStatus('Requesting camera…');
     startCamera();
   }

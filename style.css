@@ -420,6 +420,183 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 2px; }
 /* Hidden */
 .hidden { display: none !important; }
 
+/* ── Global uppercase ──────────────────────────────────────── */
+
+button, .section-title, .control-label, .toggle-label,
+.color-label, .header-title, .mode-btn, .preset-btn,
+.shape-btn, .char-mode-btn, .char-pick, .source-controls button,
+.download-btn, .wall-link { text-transform: uppercase; }
+
+/* Values/numbers inside labels stay as-is (overridden inline) */
+.control-label span { text-transform: none; }
+
+/* ── Photowall link ────────────────────────────────────────── */
+.wall-link {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent2);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  padding: 6px 10px;
+  border: 1px solid var(--accent2);
+  border-radius: var(--radius);
+  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
+}
+.wall-link:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+
+/* ── Photobooth overlay ────────────────────────────────────── */
+
+.pb-hidden { display: none !important; }
+
+.pb-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+#pb-countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(120px, 25vw, 240px);
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  text-shadow: 0 0 60px rgba(212,255,0,0.4);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Animate each tick: scale in → hold → out */
+@keyframes pb-tick-anim {
+  0%   { transform: translate(-50%,-50%) scale(1.6); opacity: 0; }
+  15%  { opacity: 1; }
+  70%  { transform: translate(-50%,-50%) scale(1);   opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(0.85); opacity: 0.4; }
+}
+
+#pb-countdown.pb-tick {
+  animation: pb-tick-anim 0.95s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+
+/* Flash */
+#pb-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease-out;
+}
+
+/* Between-shot prompt */
+#pb-prompt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0,0,0,0.65);
+  pointer-events: all;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+}
+
+#pb-prompt-count {
+  font-size: clamp(36px, 8vw, 72px);
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: -2px;
+}
+
+.pb-prompt-msg {
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Thumbnails row inside prompt */
+#pb-thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pb-thumb {
+  width: 72px;
+  height: 52px;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.5);
+  border-radius: 2px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* ── Strip modal ────────────────────────────────────────────── */
+
+.pb-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  padding: 24px;
+}
+
+.pb-modal-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 90vw;
+}
+
+#pb-strip {
+  max-width: min(900px, 88vw);
+  max-height: 72vh;
+  width: auto;
+  height: auto;
+  display: block;
+  box-shadow: 0 10px 50px rgba(0,0,0,0.7);
+}
+
+.pb-modal-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pb-modal-btns button {
+  padding: 9px 22px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+#pb-btn-dl   { background: var(--accent); border-color: var(--accent); color: #000; }
+#pb-btn-dl:hover { background: #c4ef00; }
+#pb-btn-wall { border-color: var(--accent2); color: var(--accent); }
+#pb-btn-wall:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+
+.pb-modal-hint {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
 /* ── Scrollbar ─────────────────────────────────────────────── */
 .sidebar::-webkit-scrollbar { width: 4px; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
