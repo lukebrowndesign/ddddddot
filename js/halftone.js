@@ -239,5 +239,107 @@ const Halftone = (() => {
     outputCtx.globalCompositeOperation = prev;
   }
 
-  return { render, renderRGB, renderCMYK };
+  // ── Character / ASCII mode ────────────────────────────────────────────────
+
+  function renderChar(outputCtx, imageData, options) {
+    const { width, height } = outputCtx.canvas;
+    const {
+      cellSize    = 10,
+      angle       = 0,
+      char        = '.',
+      fontFamily  = 'monospace',
+      charMode    = 'ramp',   // 'ramp' | 'size'
+      dotScale    = 0.9,
+      foreground  = '#ffffff',
+      background  = '#000000',
+      brightness  = 0,
+      contrast    = 0,
+      invert      = false,
+      colorMode   = 'mono',
+    } = options;
+
+    const { data, width: sw, height: sh } = imageData;
+
+    // Background fill
+    outputCtx.fillStyle = background;
+    outputCtx.fillRect(0, 0, width, height);
+
+    const fgParts = hexToRgb(foreground);
+    const bgParts = hexToRgb(background);
+
+    outputCtx.textAlign    = 'center';
+    outputCtx.textBaseline = 'middle';
+
+    const rad  = (angle * Math.PI) / 180;
+    const cos  = Math.cos(rad), sin = Math.sin(rad);
+    const cxC  = width / 2,    cyC = height / 2;
+    const diag = Math.ceil(Math.sqrt(width * width + height * height) / 2) + cellSize * 2;
+    const rotated = Math.abs(angle) > 0.5;
+
+    // For 'ramp' mode, font size is fixed — set once
+    if (charMode === 'ramp') {
+      outputCtx.font = `${cellSize}px ${fontFamily}`;
+    }
+
+    for (let gy = -diag; gy <= diag; gy += cellSize) {
+      for (let gx = -diag; gx <= diag; gx += cellSize) {
+        let px, py;
+        if (rotated) {
+          px = cxC + gx * cos - gy * sin;
+          py = cyC + gx * sin + gy * cos;
+        } else {
+          // Simple grid — offset so chars are centred in cells
+          px = cxC + gx;
+          py = cyC + gy;
+        }
+
+        if (px < -cellSize || px > width + cellSize || py < -cellSize || py > height + cellSize) continue;
+
+        // Sample source image at this position
+        const sx = clamp(Math.round(px), 0, sw - 1);
+        const sy = clamp(Math.round(py), 0, sh - 1);
+        const bi = (sy * sw + sx) * 4;
+        const sr = data[bi], sg = data[bi + 1], sb = data[bi + 2];
+
+        let lum = 0.2126 * sr + 0.7152 * sg + 0.0722 * sb;
+        lum = applyAdjust(lum, brightness, contrast);
+        let t = lum / 255;
+        if (invert) t = 1 - t;
+
+        let fillColor;
+
+        if (charMode === 'size') {
+          // Size varies like halftone, fixed foreground colour
+          const fs = t * cellSize * dotScale;
+          if (fs < 0.5) continue;
+          outputCtx.font = `${fs}px ${fontFamily}`;
+          fillColor = foreground;
+        } else {
+          // Fixed size, colour interpolated between bg → fg
+          if (colorMode === 'color') {
+            fillColor = `rgb(${sr},${sg},${sb})`;
+          } else {
+            const ri = Math.round(bgParts[0] + t * (fgParts[0] - bgParts[0]));
+            const gi = Math.round(bgParts[1] + t * (fgParts[1] - bgParts[1]));
+            const bi2= Math.round(bgParts[2] + t * (fgParts[2] - bgParts[2]));
+            fillColor = `rgb(${ri},${gi},${bi2})`;
+          }
+        }
+
+        outputCtx.fillStyle = fillColor;
+
+        if (rotated) {
+          outputCtx.save();
+          outputCtx.translate(px, py);
+          outputCtx.rotate(rad);
+          outputCtx.fillText(char, 0, 0);
+          outputCtx.restore();
+        } else {
+          outputCtx.fillText(char, px, py);
+        }
+      }
+    }
+  }
+
+  return { render, renderRGB, renderCMYK, renderChar };
 })();

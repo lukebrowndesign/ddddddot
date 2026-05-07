@@ -28,11 +28,12 @@
 
       <!-- Mode tabs -->
       <div class="mode-tabs">
-        <button class="mode-btn active" data-mode="halftone">Halftone</button>
-        <button class="mode-btn" data-mode="dither">Dither</button>
+        <button class="mode-btn" data-mode="halftone" style="display:none">Halftone</button>
+        <button class="mode-btn active" data-mode="dither">Dither</button>
+        <button class="mode-btn"        data-mode="char">Char</button>
       </div>
 
-      <!-- Halftone section -->
+      <!-- ── Halftone controls ─────────────────────── -->
       <div class="section" id="halftone-section">
         <div class="section-title">Shape</div>
         <div class="shape-row">
@@ -46,22 +47,65 @@
         </div>
 
         <div class="control" style="margin-top:10px">
-          <div class="control-label">Cell size <span id="cell-size-val">12</span></div>
-          <input type="range" id="cell-size" min="3" max="48" value="12">
-        </div>
-
-        <div class="control">
-          <div class="control-label">Angle <span id="angle-val">45°</span></div>
-          <input type="range" id="angle" min="0" max="89" value="45">
-        </div>
-
-        <div class="control">
           <div class="control-label">Dot scale <span id="dot-scale-val">0.90</span></div>
           <input type="range" id="dot-scale" min="0.2" max="1.6" step="0.05" value="0.9">
         </div>
       </div>
 
-      <!-- Dither section -->
+      <!-- ── Char controls ─────────────────────────── -->
+      <div class="section hidden" id="char-section">
+        <div class="section-title">Character</div>
+
+        <input type="text" id="char-input" class="char-input" value="." maxlength="2"
+               autocomplete="off" autocorrect="off" spellcheck="false">
+
+        <div class="section-title" style="margin:8px 0 5px">Quick pick</div>
+        <div class="char-pick-grid">
+          <button class="char-pick" data-char=".">.</button>
+          <button class="char-pick" data-char=":">:</button>
+          <button class="char-pick" data-char="·">·</button>
+          <button class="char-pick" data-char="•">•</button>
+          <button class="char-pick" data-char="○">○</button>
+          <button class="char-pick" data-char="◦">◦</button>
+          <button class="char-pick" data-char="#">#</button>
+          <button class="char-pick" data-char="@">@</button>
+          <button class="char-pick" data-char="*">*</button>
+          <button class="char-pick" data-char="+">+</button>
+          <button class="char-pick" data-char="×">×</button>
+          <button class="char-pick" data-char="~">~</button>
+          <button class="char-pick" data-char="█">█</button>
+          <button class="char-pick" data-char="▓">▓</button>
+          <button class="char-pick" data-char="▒">▒</button>
+          <button class="char-pick" data-char="░">░</button>
+          <button class="char-pick" data-char="◆">◆</button>
+          <button class="char-pick" data-char="■">■</button>
+          <button class="char-pick" data-char="▲">▲</button>
+          <button class="char-pick" data-char="✦">✦</button>
+          <button class="char-pick" data-char="✚">✚</button>
+          <button class="char-pick" data-char="〇">〇</button>
+          <button class="char-pick" data-char="々">々</button>
+          <button class="char-pick" data-char="o">o</button>
+        </div>
+
+        <div class="section-title" style="margin:10px 0 5px">Brightness mapping</div>
+        <div class="char-mode-row">
+          <button class="char-mode-btn active" data-charmode="ramp">Colour ramp</button>
+          <button class="char-mode-btn"        data-charmode="size">Size varies</button>
+        </div>
+
+        <div class="control" style="margin-top:10px">
+          <div class="control-label">Font <span></span></div>
+          <select id="font-family">
+            <option value="monospace">Monospace</option>
+            <option value="'Courier New', monospace">Courier New</option>
+            <option value="serif">Serif</option>
+            <option value="sans-serif">Sans-serif</option>
+            <option value="'Times New Roman', serif">Times New Roman</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ── Dither controls ───────────────────────── -->
       <div class="section hidden" id="dither-section">
         <div class="section-title">Algorithm</div>
         <div class="control">
@@ -79,7 +123,7 @@
             <optgroup label="Ordered">
               <option value="bayer-2">Bayer 2×2</option>
               <option value="bayer-4">Bayer 4×4</option>
-              <option value="bayer-8">Bayer 8×8</option>
+              <option value="bayer-8" selected>Bayer 8×8</option>
               <option value="bayer-16">Bayer 16×16</option>
             </optgroup>
             <optgroup label="Other">
@@ -90,12 +134,32 @@
         </div>
 
         <div class="control">
-          <div class="control-label">Threshold <span id="threshold-val">128</span></div>
-          <input type="range" id="threshold" min="0" max="255" value="128">
+          <div class="control-label">Threshold <span id="threshold-val">50</span></div>
+          <input type="range" id="threshold" min="0" max="255" value="50">
+        </div>
+
+        <div class="control">
+          <div class="control-label">Pixel size <span id="pixel-size-val">1</span></div>
+          <input type="range" id="pixel-size" min="1" max="12" step="1" value="1">
         </div>
       </div>
 
-      <!-- Image adjustments -->
+      <!-- ── Shared grid controls ──────────────────── -->
+      <div class="section" id="grid-section">
+        <div class="section-title">Grid</div>
+
+        <div class="control">
+          <div class="control-label">Cell size <span id="cell-size-val">12</span></div>
+          <input type="range" id="cell-size" min="3" max="48" value="12">
+        </div>
+
+        <div class="control" id="angle-row">
+          <div class="control-label">Angle <span id="angle-val">45°</span></div>
+          <input type="range" id="angle" min="0" max="89" value="45">
+        </div>
+      </div>
+
+      <!-- ── Image adjustments ─────────────────────── -->
       <div class="section">
         <div class="section-title">Image</div>
 
@@ -105,8 +169,8 @@
         </div>
 
         <div class="control">
-          <div class="control-label">Contrast <span id="contrast-val">0</span></div>
-          <input type="range" id="contrast" min="-100" max="100" value="0">
+          <div class="control-label">Contrast <span id="contrast-val">+3</span></div>
+          <input type="range" id="contrast" min="-100" max="100" value="3">
         </div>
 
         <div class="control">
@@ -124,13 +188,14 @@
         </div>
       </div>
 
-      <!-- Color -->
+      <!-- ── Color ─────────────────────────────────── -->
       <div class="section" id="color-section">
         <div class="section-title">Color</div>
 
         <div class="control" id="color-mode-row">
           <select id="color-mode">
             <option value="mono">Monochrome</option>
+            <option value="color">True color</option>
             <option value="cmyk">CMYK halftone</option>
             <option value="rgb">RGB halftone</option>
           </select>
@@ -146,12 +211,12 @@
         <div id="bg-row">
           <div class="color-row">
             <span class="color-label">Paper / background</span>
-            <input type="color" id="bg-color" value="#ffffff">
+            <input type="color" id="bg-color" value="#b4b4b4">
           </div>
         </div>
       </div>
 
-      <!-- Presets -->
+      <!-- ── Presets ────────────────────────────────── -->
       <div class="section">
         <div class="section-title">Presets</div>
         <div class="preset-grid">
@@ -163,6 +228,8 @@
           <button class="preset-btn" data-preset="blueprint">Blueprint</button>
           <button class="preset-btn" data-preset="punk">Punk</button>
           <button class="preset-btn" data-preset="silk">Silk screen</button>
+          <button class="preset-btn" data-preset="monitor">Monitor</button>
+          <button class="preset-btn" data-preset="typewriter">Typewriter</button>
         </div>
       </div>
 
